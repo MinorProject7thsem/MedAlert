@@ -18,6 +18,14 @@ const ProfileSetting = ({ user, healthData, setOpen }) => {
 
     const result = await logout();
     if (result?.error) {
+      if(result.error?.status === 401)
+      {
+        // Token might be invalid or expired, clear local state
+        dispatch(logoutDispatcher());
+        navigate("/");
+        toast.error("Session expired. Please log in again.");
+        return;
+      }
       toast.error(
         result?.error.data.message || "Logout failed. Please try again."
       );
