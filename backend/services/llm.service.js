@@ -1,15 +1,15 @@
 import dotenv from "dotenv";
-import { GoogleGenerativeAI } from "@google/generative-ai"; // legacy SDK
+import { GoogleGenAI } from "@google/genai"; // ✅ new official SDK
+
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
- * Run health analysis using Gemini (legacy SDK) -- NO web search.
- * Tries to parse strict JSON from the model; falls back to a safe structure.
+ * Run health analysis using Gemini (new SDK, no web search).
+ * Tries to parse strict JSON from the model; falls back to safe structure.
  */
 export const runLLMAnalysis = async ({ ocrResult, userNotes, healthSnapshot }) => {
-  // Explicitly forbid web search in the prompt
   const prompt = `
 You are a health analysis assistant. Use ONLY the OCR data, user notes, and health profile.
 DO NOT use web search or any external sources — rely only on the provided OCR, user notes, and health profile.
@@ -35,50 +35,52 @@ ${userNotes || "N/A"}
 
 HEALTH PROFILE:
 ${JSON.stringify(healthSnapshot ?? {}, null, 2)}
-Make sure you are suggesting the personalized result with reference to the health profile of user and in summary mention a little about their health profile in personalized manner. 
+
+Make sure you are suggesting the personalized result with reference to the health profile of the user and in summary mention a little about their health profile in a personalized manner.
 Most important: Do not miss summary in the response. foodsuggestions in json response should always be string type only.
 `;
 
   try {
-    // create a model instance (legacy SDK pattern)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const modelId = "gemini-2.0-flash"; // ✅ Updated to supported model
+    const result = await genAI.models.generateContent({
+      model: modelId,
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
+    });
 
-    // Use the simple generateContent(prompt) flow (no tools / no web search)
-    const result = await model.generateContent(prompt);
+    // ✅ Extract text using new SDK's response format
+    let rawText = result?.text ?? null;
 
-    // Many legacy SDK responses expose a response-like object with .text()
-    let rawText = null;
-    try {
-      if (result?.response && typeof result.response.text === "function") {
-        rawText = await result.response.text();
-      }
-    } catch (e) {
-      // ignore and fallback to other fields below
+    // ✅ Fallback for unexpected response shapes
+    if (!rawText) {
+      rawText =
+        result?.output?.[0]?.content?.[0]?.text ??
+        result?.candidates?.[0]?.content?.[0]?.text ??
+        null;
     }
 
-    // Fallbacks for other possible response shapes
-    if (!rawText) rawText = result?.text ?? null;
-    if (!rawText) rawText = result?.output?.[0]?.content?.[0]?.text ?? null;
-    if (!rawText) rawText = result?.candidates?.[0]?.content?.[0]?.text ?? null;
-
-    // Try to parse JSON strictly; if it fails, try to extract JSON block
+    // ✅ Attempt to parse JSON safely
     let parsed = null;
     if (rawText) {
       try {
         parsed = JSON.parse(rawText);
-      } catch (e) {
+      } catch {
         const match = rawText.match(/\{[\s\S]*\}/);
         if (match) {
           try {
             parsed = JSON.parse(match[0]);
-          } catch (e2) {
+          } catch {
             parsed = null;
           }
         }
       }
     }
 
-    // If parsing failed, return safe fallback while including raw output for debugging
+    // ✅ Fallback if parsing failed
     if (!parsed) {
       parsed = {
         usefulIngredients: [],
@@ -90,10 +92,9 @@ Most important: Do not miss summary in the response. foodsuggestions in json res
       };
     }
 
-
     return {
       ...parsed,
-      model: "gemini-1.5-flash",
+      model: modelId,
       usedWebSearch: false,
       groundingMetadata: null,
     };
@@ -105,7 +106,7 @@ Most important: Do not miss summary in the response. foodsuggestions in json res
       consumptionGuidelines: "",
       foodSuggestions: "",
       summary: "",
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       usedWebSearch: false,
       groundingMetadata: null,
       error: err?.message ?? String(err),

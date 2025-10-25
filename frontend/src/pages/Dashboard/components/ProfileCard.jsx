@@ -30,6 +30,13 @@ const ProfileCard = ({ location, setIsOpen }) => {
 
     const result = await logout();
     if (result?.error) {
+      if (result.error?.status === 401) {
+        // Token might be invalid or expired, clear local state
+        dispatch(logoutDispatcher());
+        navigate("/");
+        toast.error("Session expired. Please log in again.");
+        return;
+      }
       toast.error(
         result?.error.data.message || "Logout failed. Please try again."
       );
@@ -47,7 +54,9 @@ const ProfileCard = ({ location, setIsOpen }) => {
           {user?.name?.charAt(0) || "U"}
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">{user?.name || "User"}</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            {user?.name || "User"}
+          </h2>
           <p className="text-sm text-gray-500">{user?.email}</p>
           <button
             onClick={handleLogout}
