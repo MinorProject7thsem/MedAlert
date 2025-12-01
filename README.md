@@ -1,126 +1,131 @@
-MedAlert AI – README
-🩺 MedAlert AI – AI-Powered Health & Ingredient Analysis
-MedAlert AI is a full-stack web application that analyzes food and medicine labels using OCR and Google Gemini AI. It matches extracted ingredients with the user's health profile (allergies, BP, sugar levels, medications) and generates instant, personalized health reports with caution alerts.
+# MedAlert AI – README
 
-🚀 Features
-🔐 User Management & Health Profile
-Secure login & signup (JWT authentication)
+## Overview
+MedAlert AI is a full-stack AI-powered web application that analyzes food and medicine labels using OCR and Google Gemini AI. The system compares extracted ingredients with the user’s health profile (allergies, blood pressure, sugar levels, medications) and generates personalized safety reports.
 
-Add/update health profile:
-Allergies
-Blood Pressure
-Sugar Levels
-Medications
-Change password feature
+## Features
 
+### 1. User & Health Profile
+- Secure login and signup (JWT authentication)
+- Create and update health profile:
+  - Allergies
+  - Blood Pressure
+  - Sugar Levels
+  - Medications
+- Password update feature
 
-📸 AI Ingredient Scanning
-Upload or click image of product label
-OCR extracts text from the image
-Gemini AI cleans, analyzes & generates structured output
-Personalized alerts & recommendations
+### 2. AI Ingredient Scanning
+- Upload or capture image of product label
+- OCR extracts raw text
+- Gemini AI cleans, analyzes, and structures the text
+- Personalized alerts and recommendations
 
-📊 Report System
-Detailed health assessment for every scan
-Alerts for harmful ingredients
-Saved report history
-Delete old reports
+### 3. Report System
+- Structured detailed report for every scan
+- Alerts for harmful ingredients
+- Saved report history
+- Ability to delete reports
 
-🎯 Tech Stack
-Frontend: React.js
-Backend: Node.js + Express.js
-Database: MongoDB
-OCR: OCR.space API
+### 4. Tech Stack
+- Frontend: React.js  
+- Backend: Node.js + Express.js  
+- Database: MongoDB  
+- OCR: OCR.space API  
+- AI Model: Google Gemini  
+- Image Handling: Multer + Sharp  
 
-
-📁 Project Structure
+## Project Structure
 MedAlert-AI/
 │── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middleware/
-│   ├── models/
-│   ├── server.js
-│   ├── .env
+│ ├── controllers/
+│ ├── routes/
+│ ├── middleware/
+│ ├── models/
+│ ├── utils/
+│ ├── server.js
+│ ├── .env
+│
 │── frontend/
-│   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── App.js
+│ ├── src/
+│ ├── components/
+│ ├── pages/
+│ ├── App.js
+│
 │── README.md
 
-🧠 How the System Works
-1️⃣ User uploads image
-2️⃣ Image sent to backend via Multer
-3️⃣ Sharp optimizes image
-4️⃣ OCR.space extracts raw text
-5️⃣ Backend fetches user health profile
-6️⃣ Gemini AI performs:
-Text cleanup
-Ingredient identification
-Risk analysis
-JSON report creation
-7️⃣ Report saved to MongoDB
-8️⃣ React frontend displays structured report
 
-🔧 Installation Guide
-Backend Setup
+## How the System Works
+1. User uploads an image  
+2. Image is sent to backend using Multer  
+3. Sharp optimizes the image  
+4. OCR.space extracts text  
+5. Backend fetches user’s health profile  
+6. Gemini AI performs text cleaning, ingredient extraction, and risk analysis  
+7. Structured report is saved to MongoDB  
+8. Frontend displays the report  
+
+## Installation Guide
+
+### Backend Setup
 cd backend
 npm install
 npm start
 
-Create a .env file:
-MONGO_URI=your_mongo_url
-OCR_API_KEY=your_ocr_key
-GEMINI_API_KEY=your_gemini_key
-JWT_SECRET=your_secret
 
-Frontend Setup
+
+### Frontend Setup
 cd frontend
 npm install
 npm start
 
-🔍 API Endpoints
-Authentication
-Method	Endpoint	Description
-POST	/auth/register	Register user
-POST	/auth/login	Login user
-PUT	/auth/update-password	Update password
-Health Profile
-Method	Endpoint	Description
-POST	/profile/create	Create profile
-PUT	/profile/update	Update profile
-GET	/profile/me	Get profile
-Scanning & Reports
-Method	Endpoint	Description
-POST	/scan/ocr	OCR extraction
-POST	/scan/analyze	Gemini analysis
-GET	/reports	Fetch report history
-DELETE	/reports/:id	Delete a report
 
-🧪 Testing Strategy
-Unit Testing for backend API routes
-Integration testing for full pipeline
+## API Endpoints
 
-Error handling testing:
-Blurry images
-Missing ingredients
-Incorrect health profile
-Invalid tokens
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | /auth/register         | Register user |
+| POST   | /auth/login            | User login |
+| PUT    | /auth/update-password  | Update password |
 
-⭐ Highlights of the System
-AI-powered personalized health safety
-Works with noisy/blurry images
-Cross-platform responsive UI
-Secure and encrypted data handling
-Fast and optimized OCR pipeline
+### Health Profile
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | /profile/create  | Create profile |
+| PUT    | /profile/update  | Update profile |
+| GET    | /profile/me      | Get user profile |
 
-🔮 Future Improvements
-Multi-language OCR & AI support
-Product barcode scanning
-Medication interaction checker
-AI-powered diet recommendations
-Voice-based real-time product scanning
+### Scanning & Reports
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | /scan/ocr            | OCR extraction |
+| POST   | /scan/analyze        | Gemini AI analysis |
+| GET    | /reports             | Fetch report history |
+| DELETE | /reports/:id         | Delete report |
 
-You can use it:-
-Live Link: https://med-alert-frontend.vercel.app
+## Testing Strategy
+- Unit testing for backend routes  
+- Integration testing for end-to-end scan workflow  
+- Error testing for:
+  - Blurry images  
+  - Missing text  
+  - Invalid health data  
+  - Expired tokens  
+
+## System Highlights
+- Personalized real-time AI health analysis  
+- Works even with noisy/blurry images  
+- Responsive and clean UI  
+- Secure encrypted data handling  
+- Fast OCR and optimized pipeline  
+
+## Future Enhancements
+- Multi-language OCR & analysis  
+- Product barcode scanning  
+- Medication interaction checker  
+- AI-based diet recommendations  
+- Voice-based product scanning  
+
+## Live Deployment
+Frontend: https://med-alert-frontend.vercel.app
+
