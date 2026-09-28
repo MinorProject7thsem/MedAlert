@@ -127,5 +127,5 @@ npm start
 - Voice-based product scanning  
 
 ## Live Deployment
-Frontend: https://med-alert-frontend.vercel.app
+Frontend: https://med-alert-ecru.vercel.app
 
