@@ -26,7 +26,7 @@ const analysisReportSchema = new Schema({
   harmfulIngredients: [ingredientSchema],
   consumptionGuidelines: { type: String },
   foodSuggestions: { type: String },
-  summary: { type: String, required: true },
+  summary: { type: String, required: false },
 
 //   model: { type: String, default: "gemini-pro" },
   usedWebSearch: { type: Boolean, default: true },
